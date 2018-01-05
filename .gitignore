@@ -17,3 +17,9 @@ ProjectSettings/
 SleepyGuy\.sln
 
 Assembly-CSharp\.csproj
+
+obj/
+
+*.prefab
+
+Assets/MainLevel\.unity

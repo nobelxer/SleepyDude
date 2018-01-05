@@ -8,7 +8,6 @@ public class IgnoreCollisions : MonoBehaviour {
 
     public GameObject[] ignore;
 
-
     // Use this for initialization
     void Start () {
         myRig = GetComponent<Rigidbody2D>();
@@ -16,8 +15,7 @@ public class IgnoreCollisions : MonoBehaviour {
         foreach(GameObject gameObject in ignore)
         {
             Physics2D.IgnoreCollision(gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
-        } 
-     
+        }     
     }
 	
 	// Update is called once per frame
