@@ -8,8 +8,6 @@ public class DragScript : MonoBehaviour {
     public GameManager gameManager;
     public float touchSensivity; // slows down rotation
 
-    private Color newColor = Color.blue;
-    private Color startColor = new Color(0.90F, 0.163F, 0.223F);
     private SpriteRenderer imageRenderer;
     private Rigidbody2D rigidBody2D;
 
@@ -30,18 +28,13 @@ public class DragScript : MonoBehaviour {
     // Rotation
 
     private Vector3 playerSize;
-    private Rect screenRect;
-    private Vector3 originalPosition;
     private Quaternion originalRotation;
 
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
         imageRenderer = GetComponent<SpriteRenderer>();
-        rigidBody2D = GetComponent<Rigidbody2D>();
-        screenRect = new Rect(0, 0, Screen.width, Screen.height);
-        originalPosition = transform.position;
-        originalRotation = transform.rotation;
+        rigidBody2D = GetComponent<Rigidbody2D>();  
     }
 
     void Update()
@@ -65,10 +58,9 @@ public class DragScript : MonoBehaviour {
             rigidBody2D.bodyType = RigidbodyType2D.Dynamic;
             enableRotate = gameManager.activeRotate;
             enableMove = gameManager.activeMove;
-            imageRenderer.material.color = newColor;
+            
         } else {
-            rigidBody2D.bodyType = RigidbodyType2D.Kinematic;        
-            imageRenderer.material.color = startColor;
+            rigidBody2D.bodyType = RigidbodyType2D.Kinematic; 
             objectHasBeenPicked = false;
             enableMove = false;
             enableRotate = false;                   

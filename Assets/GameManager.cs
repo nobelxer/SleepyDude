@@ -50,6 +50,15 @@ public class GameManager : MonoBehaviour {
         {
             editMode = false;
         }
+
+        if (gameInMotion)
+        {
+            editMode = false;
+            blockMovement = true;
+            activeMove = false;
+            activeRotate = false;
+            canChangeItem = false;
+        }
     }
 
     // Set last clicked item to active for dragging
@@ -64,7 +73,6 @@ public class GameManager : MonoBehaviour {
         Destroy(playerInstance);
         playerInstance = Instantiate(player, playerSpawn.transform.position, playerSpawn.transform.rotation);
         playerInstance.transform.eulerAngles = new Vector3(0, 0, Random.Range(0, 360));
-        print("creating new player");
         gravityScale = Random.Range(1, 5);
         stopPlayerMoving = true;
     }
@@ -112,8 +120,13 @@ public class GameManager : MonoBehaviour {
 
     public void ReleaseButtonPressed()
     {
-        stopPlayerMoving = false; // set to false to release hingeJoint2D
-        gravityScale = 1;
+        if (CheckIfActiveItemCanBeChanged())
+        {
+            gameInMotion = true;
+            activeDrag = null;
+            stopPlayerMoving = false; // set to false to release hingeJoint2D
+            gravityScale = 1;
+        }
     }
 
     public bool CheckIfActiveItemCanBeChanged()
