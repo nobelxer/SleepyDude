@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ItemIconControl : MonoBehaviour
 {
-
     private GameManager gameManager;
 
     public GameObject rotationArrowLeft;
@@ -14,7 +13,6 @@ public class ItemIconControl : MonoBehaviour
 
     private BoxCollider2D boxCollider2D;
 
-
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
@@ -23,22 +21,18 @@ public class ItemIconControl : MonoBehaviour
         rotationArrowRight.GetComponent<SpriteRenderer>().enabled = false;
         moveArrows.GetComponent<SpriteRenderer>().enabled = false;
         wrongPosition.GetComponent<SpriteRenderer>().enabled = false;
-
     }
-
 
     void Update()
     {
-
         if (gameManager.activeDrag == gameObject)
         {
             if (gameManager.activeRotate)
             {
                 rotationArrowLeft.GetComponent<SpriteRenderer>().enabled = true;
                 rotationArrowRight.GetComponent<SpriteRenderer>().enabled = true;
-            }
-            else
-            {
+
+            } else {
                 rotationArrowLeft.GetComponent<SpriteRenderer>().enabled = false;
                 rotationArrowRight.GetComponent<SpriteRenderer>().enabled = false;
             }
@@ -46,18 +40,41 @@ public class ItemIconControl : MonoBehaviour
             if (gameManager.activeMove)
             {
                 moveArrows.GetComponent<SpriteRenderer>().enabled = true;
-            }
-            else
-            {
+
+            } else {
                 moveArrows.GetComponent<SpriteRenderer>().enabled = false;
             }
-        }else
-        {
+        } else {
             rotationArrowLeft.GetComponent<SpriteRenderer>().enabled = false;
             rotationArrowRight.GetComponent<SpriteRenderer>().enabled = false;
             moveArrows.GetComponent<SpriteRenderer>().enabled = false;
             wrongPosition.GetComponent<SpriteRenderer>().enabled = false;
         }
-        
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.tag == "Obstacle")
+        {
+            wrongPosition.GetComponent<SpriteRenderer>().enabled = true;
+            gameManager.cantPlaceHere = true; 
+        }
+    }
+    void OnTriggerStay2D(Collider2D collider)
+    {
+        if (collider.tag == "Obstacle")
+        {
+            wrongPosition.GetComponent<SpriteRenderer>().enabled = true;
+            gameManager.cantPlaceHere = true;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D collider)
+    {
+        if (collider.tag == "Obstacle")
+        {
+            wrongPosition.GetComponent<SpriteRenderer>().enabled = false;
+            gameManager.cantPlaceHere = false;
+        }
     }
 }

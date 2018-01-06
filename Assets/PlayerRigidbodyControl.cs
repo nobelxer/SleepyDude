@@ -7,9 +7,7 @@ public class PlayerRigidbodyControl : MonoBehaviour {
     private GameManager gameManager;
     private Rigidbody2D rigidBody2D;
 
-
-    void Start()
-    {
+    void Start() {
         gameManager = FindObjectOfType<GameManager>();
         rigidBody2D = GetComponent<Rigidbody2D>();
     }

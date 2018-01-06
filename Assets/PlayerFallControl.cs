@@ -6,15 +6,11 @@ public class PlayerFallControl : MonoBehaviour {
 
     private GameManager gameManager;
 
-    private HingeJoint2D hingeJoint2D;
-
-  
+    private HingeJoint2D hingeJoint2D;  
 
     void Start () {
-
         gameManager = FindObjectOfType<GameManager>();
-        hingeJoint2D = GetComponent<HingeJoint2D>();      
-
+        hingeJoint2D = GetComponent<HingeJoint2D>();
     }	
 
 	void Update () {

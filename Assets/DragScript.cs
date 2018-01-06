@@ -11,6 +11,7 @@ public class DragScript : MonoBehaviour {
     private Color newColor = Color.blue;
     private Color startColor = new Color(0.90F, 0.163F, 0.223F);
     private SpriteRenderer imageRenderer;
+    private Rigidbody2D rigidBody2D;
 
     // Drag and drop
     private Vector3 screenPoint;
@@ -28,21 +29,25 @@ public class DragScript : MonoBehaviour {
     public float myRotation;
     // Rotation
 
-    Vector3 playerSize;
-    Rect screenRect;
+    private Vector3 playerSize;
+    private Rect screenRect;
+    private Vector3 originalPosition;
+    private Quaternion originalRotation;
 
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
         imageRenderer = GetComponent<SpriteRenderer>();
+        rigidBody2D = GetComponent<Rigidbody2D>();
         screenRect = new Rect(0, 0, Screen.width, Screen.height);
-        
+        originalPosition = transform.position;
+        originalRotation = transform.rotation;
     }
 
     void Update()
-    {
-        playerSize = imageRenderer.bounds.size; 
+    {    
 
+        playerSize = imageRenderer.bounds.size;
 
         var distanceToCamera = (transform.position - Camera.main.transform.position).z;
 
@@ -56,11 +61,13 @@ public class DragScript : MonoBehaviour {
 
         // Check with Gm if you are the active object
         if (gameManager.activeDrag == gameObject)
-        {             
+        {
+            rigidBody2D.bodyType = RigidbodyType2D.Dynamic;
             enableRotate = gameManager.activeRotate;
             enableMove = gameManager.activeMove;
             imageRenderer.material.color = newColor;
         } else {
+            rigidBody2D.bodyType = RigidbodyType2D.Kinematic;        
             imageRenderer.material.color = startColor;
             objectHasBeenPicked = false;
             enableMove = false;
@@ -70,7 +77,7 @@ public class DragScript : MonoBehaviour {
         // rotation logic
         if (enableRotate)
         {
-            if (gameManager.mouseOverHUD == false)
+            if (gameManager.blockMovement == false)
             {
                 // Rotation - starting point
                 if (Input.GetMouseButtonDown(0))
@@ -102,7 +109,7 @@ public class DragScript : MonoBehaviour {
                 offsetOut = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPointOut.z));
             }
 
-            if (gameManager.mouseOverHUD == false)
+            if (gameManager.blockMovement == false)
             {
                 if (Input.GetMouseButton(0))
                 {
@@ -121,13 +128,17 @@ public class DragScript : MonoBehaviour {
 
     void OnMouseDown()
     {
-        // Set me as object being dragged and send to GM
-        if (objectHasBeenPicked == false)
+        gameManager.CheckIfActiveItemCanBeChanged();
+
+        if (gameManager.canChangeItem == true)
         {
-            objectHasBeenPicked = true;
-            gameManager.SetActiveDrag(gameObject);
-            gameManager.activeMove = true;
-            enableMove = true;  
+            if (objectHasBeenPicked == false)
+            {
+                objectHasBeenPicked = true;
+                gameManager.SetActiveDrag(gameObject);
+                gameManager.activeMove = true;
+                enableMove = true;
+            }
         }
 
         // Set starting offSet
@@ -138,14 +149,17 @@ public class DragScript : MonoBehaviour {
     void OnMouseDrag()
     {
         // drag logic
-        if (gameManager.mouseOverHUD == false)
+        if (gameManager.blockMovement == false)
         {            
             if (enableRotate != true)
             {
-                Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
-                Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + offset;
-                transform.position = cursorPosition;
+                if(objectHasBeenPicked == true)
+                {
+                    Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+                    Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + offset;
+                    transform.position = cursorPosition;
+                }
             }
         }
-    }    
+    }
 }
