@@ -26,7 +26,7 @@ public class ItemIconControl : MonoBehaviour
 
     void Update()
     {
-        if (gameManager.activeDrag == gameObject)
+        if (gameManager.activeItem == gameObject)
         {
             goodPosition.GetComponent<SpriteRenderer>().enabled = true;
 

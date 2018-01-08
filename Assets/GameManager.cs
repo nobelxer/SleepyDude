@@ -6,12 +6,14 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
 
-    public GameObject activeDrag;
+    public GameObject activeItem;
     public GameObject player;
     public GameObject playerSpawn;
     public UIControl uiControl;
     public TimeSlowDown timeMachine;
     private GameObject playerInstance;
+    public GameObject lastSpawnedItem;
+    public Button lastClickedButton;
 
     public bool activeRotate;
     public bool activeMove;
@@ -48,7 +50,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-        if (activeDrag != null)
+        if (activeItem != null)
         {
             editMode = true;
         }
@@ -72,7 +74,7 @@ public class GameManager : MonoBehaviour
     {
 
         activeRotate = false; // reset activeRotate value every time target changes
-        activeDrag = target;
+        activeItem = target;
     }
 
     public void CreatePlayer()
@@ -128,7 +130,7 @@ public class GameManager : MonoBehaviour
     {
         if (CheckIfActiveItemCanBeChanged())
         {
-            activeDrag = null;
+            activeItem = null;
             ObjectMoving();
         }
     }
@@ -138,7 +140,7 @@ public class GameManager : MonoBehaviour
         if (CheckIfActiveItemCanBeChanged())
         {
             gameInMotion = true;
-            activeDrag = null;
+            activeItem = null;
             stopPlayerMoving = false; // set to false to release hingeJoint2D
             gravityScale = 1;
         }
@@ -157,7 +159,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public bool CheckIfActiveItemCanBeMoved()
+    public bool CheckIfGameIsInMotion()
     {
         if (gameInMotion != true)
         {
@@ -173,5 +175,35 @@ public class GameManager : MonoBehaviour
     public void SlowTimeDown()
     {
         timeMachine.DoSlowMotion();
+    }
+
+    public bool CheckIfActiveItemHasBeenMoved()
+    {
+        if (lastSpawnedItem.transform.position == new Vector3(0, -3f, 0))
+        {           
+            return false;
+        }
+        else
+        {        
+            return true;
+        }
+    }
+
+    public void SetLastSpawnedItem(GameObject item)
+    {
+        lastSpawnedItem = item;
+    }
+
+    public void CheckIfSpawnedShouldBeDestroyed()
+    {
+        if (CheckIfActiveItemHasBeenMoved() == false)
+        {
+            Destroy(lastSpawnedItem);
+        }
+    }
+
+    public void SetLastClickedButton(Button button)
+    {
+        lastClickedButton = button;
     }
 }

@@ -56,7 +56,7 @@ public class UIControl : MonoBehaviour
             confirmButton.GetComponent<Image>().sprite = confirmButtonGreen;
         }
 
-        if (gameManager.activeDrag == null)
+        if (gameManager.activeItem == null)
         {
             GreyOutButtons();
         }

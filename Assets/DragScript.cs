@@ -29,7 +29,6 @@ public class DragScript : MonoBehaviour
     // Rotation
 
     private Vector3 playerSize;
-    private Quaternion originalRotation;
 
     void Start()
     {
@@ -51,15 +50,15 @@ public class DragScript : MonoBehaviour
         var bottomBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, distanceToCamera)).y + (playerSize.y / 2);
         var topBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 1, distanceToCamera)).y - (playerSize.y / 2);
 
+
         touchSensivity = gameManager.touchSensitivityMultiplier;
 
         // Check with Gm if you are the active object
-        if (gameManager.activeDrag == gameObject)
+        if (gameManager.activeItem == gameObject)
         {
             rigidBody2D.bodyType = RigidbodyType2D.Dynamic;
             enableRotate = gameManager.activeRotate;
             enableMove = gameManager.activeMove;
-
         }
         else
         {
@@ -112,7 +111,7 @@ public class DragScript : MonoBehaviour
                     Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + offsetOut;
                     transform.position = (new Vector3(
                     Mathf.Clamp(cursorPosition.x, leftBorder, rightBorder),
-                    Mathf.Clamp(cursorPosition.y, bottomBorder, topBorder), 0));
+                    Mathf.Clamp(cursorPosition.y, bottomBorder+2f, topBorder), 0));
                 }
             }
         }
@@ -121,7 +120,7 @@ public class DragScript : MonoBehaviour
     void OnMouseDown()
     {
         gameManager.CheckIfActiveItemCanBeChanged();
-        gameManager.CheckIfActiveItemCanBeMoved();
+        gameManager.CheckIfGameIsInMotion();
 
         if (gameManager.canChangeItem == true)
         {

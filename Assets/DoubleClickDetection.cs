@@ -20,7 +20,7 @@ public class DoubleClickDetection : MonoBehaviour
 
             if (timeDelta < doubleClickTime)
             {
-                if (gameManager.activeDrag != null)
+                if (gameManager.activeItem != null)
                 {
                     gameManager.ObjectSwapControl();
                 }

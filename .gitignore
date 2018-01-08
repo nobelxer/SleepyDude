@@ -23,3 +23,5 @@ obj/
 *.prefab
 
 Assets/MainLevel\.unity
+
+*.unity
