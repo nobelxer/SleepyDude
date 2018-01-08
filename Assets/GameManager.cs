@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
 
     public GameObject activeDrag;
     public GameObject player;
     public GameObject playerSpawn;
     public UIControl uiControl;
+    public TimeSlowDown timeMachine;
     private GameObject playerInstance;
 
     public bool activeRotate;
@@ -18,7 +20,6 @@ public class GameManager : MonoBehaviour {
     public bool editMode;
     public bool cantPlaceHere;
     public bool canChangeItem = true;
-
     public bool gameInMotion;
 
     public float touchSensitivityMultiplier;
@@ -26,13 +27,17 @@ public class GameManager : MonoBehaviour {
 
     void Start()
     {
+
+        timeMachine = GetComponent<TimeSlowDown>();
         uiControl = GetComponent<UIControl>();
 
-       Screen.orientation = ScreenOrientation.Portrait;
+        Screen.orientation = ScreenOrientation.Portrait;
         if (Application.platform == RuntimePlatform.Android)
         {
             touchSensitivityMultiplier = 0.3f;
-        } else {
+        }
+        else
+        {
             touchSensitivityMultiplier = 0.1f;
         }
 
@@ -42,6 +47,7 @@ public class GameManager : MonoBehaviour {
 
     void Update()
     {
+
         if (activeDrag != null)
         {
             editMode = true;
@@ -62,22 +68,30 @@ public class GameManager : MonoBehaviour {
     }
 
     // Set last clicked item to active for dragging
-    public void SetActiveDrag(GameObject target) {
+    public void SetActiveDrag(GameObject target)
+    {
 
         activeRotate = false; // reset activeRotate value every time target changes
         activeDrag = target;
     }
 
-    public void CreatePlayer() {
+    public void CreatePlayer()
+    {
 
-        Destroy(playerInstance);
+        DestroyExistingCharacter();
         playerInstance = Instantiate(player, playerSpawn.transform.position, playerSpawn.transform.rotation);
-        playerInstance.transform.eulerAngles = new Vector3(0, 0, Random.Range(0, 360));
+        playerInstance.transform.eulerAngles = new Vector3(0, 0, Random.Range(-47, 154));
         gravityScale = Random.Range(1, 5);
         stopPlayerMoving = true;
     }
 
-    public void ObjectRotating() {
+    public void DestroyExistingCharacter()
+    {
+        Destroy(playerInstance);
+    }
+
+    public void ObjectRotating()
+    {
 
         blockMovement = true;
         activeMove = false;
@@ -85,7 +99,8 @@ public class GameManager : MonoBehaviour {
         Invoke("ReleaseMovement", 0.1f);
     }
 
-    public void ObjectMoving() {
+    public void ObjectMoving()
+    {
         blockMovement = true;
         activeMove = true;
         activeRotate = false;
@@ -103,7 +118,7 @@ public class GameManager : MonoBehaviour {
             ObjectMoving();
         }
     }
-    
+
     public void ReleaseMovement()
     {
         blockMovement = false;
@@ -131,13 +146,32 @@ public class GameManager : MonoBehaviour {
 
     public bool CheckIfActiveItemCanBeChanged()
     {
-        if (cantPlaceHere != true) {
+        if (cantPlaceHere != true)
+        {
             return canChangeItem = true;
         }
         else
         {
             uiControl.ShowInfoBoxCantBePlacedHere();
-            return canChangeItem = false;            
+            return canChangeItem = false;
         }
+    }
+
+    public bool CheckIfActiveItemCanBeMoved()
+    {
+        if (gameInMotion != true)
+        {
+            return canChangeItem = true;
+        }
+        else
+        {
+            uiControl.ShowInfoBoxPleaseResetTheCharacter();
+            return canChangeItem = false;
+        }
+    }
+
+    public void SlowTimeDown()
+    {
+        timeMachine.DoSlowMotion();
     }
 }

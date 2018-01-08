@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Panel : MonoBehaviour {
+public class Panel : MonoBehaviour
+{
 
     public Button inventoryButton;
     public bool panelSlidOut;
-   
+
     private Animator animator;
 
-    void Start () {
+    void Start()
+    {
         animator = GetComponent<Animator>();
     }
 
-	void Update () {		
-	}
+    void Update()
+    {
+    }
 
     public void SlideInAndOut()
     {

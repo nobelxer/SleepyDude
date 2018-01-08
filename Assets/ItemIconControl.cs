@@ -33,21 +33,27 @@ public class ItemIconControl : MonoBehaviour
             if (gameManager.activeRotate)
             {
                 rotationArrowLeft.GetComponent<SpriteRenderer>().enabled = true;
-                rotationArrowRight.GetComponent<SpriteRenderer>().enabled = true;           
+                rotationArrowRight.GetComponent<SpriteRenderer>().enabled = true;
 
-            } else {
+            }
+            else
+            {
                 rotationArrowLeft.GetComponent<SpriteRenderer>().enabled = false;
-                rotationArrowRight.GetComponent<SpriteRenderer>().enabled = false;              
+                rotationArrowRight.GetComponent<SpriteRenderer>().enabled = false;
             }
 
             if (gameManager.activeMove)
             {
-                moveArrows.GetComponent<SpriteRenderer>().enabled = true;                
+                moveArrows.GetComponent<SpriteRenderer>().enabled = true;
 
-            } else {
-                moveArrows.GetComponent<SpriteRenderer>().enabled = false;      
             }
-        } else {
+            else
+            {
+                moveArrows.GetComponent<SpriteRenderer>().enabled = false;
+            }
+        }
+        else
+        {
             rotationArrowLeft.GetComponent<SpriteRenderer>().enabled = false;
             rotationArrowRight.GetComponent<SpriteRenderer>().enabled = false;
             moveArrows.GetComponent<SpriteRenderer>().enabled = false;
@@ -63,7 +69,7 @@ public class ItemIconControl : MonoBehaviour
             wrongPosition.GetComponent<SpriteRenderer>().enabled = true;
             wrongPosition.GetComponent<SpriteRenderer>().sortingOrder = 2;
             goodPosition.GetComponent<SpriteRenderer>().sortingOrder = -1;
-            gameManager.cantPlaceHere = true; 
+            gameManager.cantPlaceHere = true;
         }
     }
     void OnTriggerStay2D(Collider2D collider)

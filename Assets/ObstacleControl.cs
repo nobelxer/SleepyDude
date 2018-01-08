@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObstacleControl : MonoBehaviour {
+public class ObstacleControl : MonoBehaviour
+{
 
     private GameManager gameManager;
     private CapsuleCollider2D capsuleCollider2D;
-
 
     void Start()
     {
@@ -14,8 +14,8 @@ public class ObstacleControl : MonoBehaviour {
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
     }
 
-    void Update () {
-    
+    void Update()
+    {
         if (gameManager.editMode)
         {
             capsuleCollider2D.isTrigger = true;

@@ -4,15 +4,15 @@ using System.Collections;
 public class DoubleClickDetection : MonoBehaviour
 {
     private GameManager gameManager;
-    private float doubleClickTime = 0.3f;
+    private float doubleClickTime = 0.2f;
     private float lastClickTime = -10f;
 
     void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();       
+        gameManager = FindObjectOfType<GameManager>();
     }
 
-    void Update()
+    void Update() 
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -20,7 +20,8 @@ public class DoubleClickDetection : MonoBehaviour
 
             if (timeDelta < doubleClickTime)
             {
-                if (gameManager.activeDrag != null) {
+                if (gameManager.activeDrag != null)
+                {
                     gameManager.ObjectSwapControl();
                 }
                 print("double click");

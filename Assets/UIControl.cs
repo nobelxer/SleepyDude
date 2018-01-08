@@ -4,33 +4,38 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class UIControl : MonoBehaviour {
-
+public class UIControl : MonoBehaviour
+{
     public GameObject movementPanel;
     public GameObject inventoryPanel;
-    private bool inventoryPanelON = true;
 
     public Button confirmButton;
     public Sprite confirmButtonGreen;
     public Sprite confirmButtonOrange;
     public Button rotateButton;
     public Button moveButton;
+    public Button releaseCharacter;
+    public Sprite playButton;
+    public Sprite resetCharacter;
+    private bool characterReleased;
 
     public Image infoBoxCantPlaceItem;
+    public Text infoBoxText;
 
     private GameManager gameManager;
 
     private bool fadeItem;
     private float alpha;
-
-    void Start () {
+    
+    void Start()
+    {
         gameManager = FindObjectOfType<GameManager>();
-        infoBoxCantPlaceItem.gameObject.SetActive(false);   
+        infoBoxCantPlaceItem.gameObject.SetActive(false);
     }
 
     void Update()
     {
-        alpha -= Time.deltaTime / 2;  
+        alpha -= Time.deltaTime / 2;
 
         if (fadeItem)
         {
@@ -46,7 +51,7 @@ public class UIControl : MonoBehaviour {
             confirmButton.GetComponent<Image>().sprite = confirmButtonOrange;
         }
 
-        if(gameManager.editMode == false)
+        if (gameManager.editMode == false)
         {
             confirmButton.GetComponent<Image>().sprite = confirmButtonGreen;
         }
@@ -54,68 +59,76 @@ public class UIControl : MonoBehaviour {
         if (gameManager.activeDrag == null)
         {
             GreyOutButtons();
-        }else
-        {
-            GreyOutButtonsCancel();
-        }       
-    }
-
-
-    public void SwitchPanels()
-    {
-        print("Button Clicked");
-        if (inventoryPanelON == true)
-        {
-            movementPanel.SetActive(true);
-            inventoryPanel.SetActive(false);
-            inventoryPanelON = false;
         }
         else
         {
-            movementPanel.SetActive(false);
-            inventoryPanel.SetActive(true);
-            inventoryPanelON = true;
+            GreyOutButtonsCancel();
         }
     }
 
-    public void Rotate() {
+    public void Rotate()
+    {
         gameManager.ObjectRotating();
         print("Rotate Clicked");
     }
 
-    public void Move() {
+    public void Move()
+    {
         gameManager.ObjectMoving();
         print("Move clicked");
     }
 
-    public void Confirm() {
+    public void Confirm()
+    {
         gameManager.ConfirmButtonPressed();
     }
 
-    public void Release() {
-        gameManager.ReleaseButtonPressed();
+    public void Release()
+    {
+        if (characterReleased == false)
+        {
+            releaseCharacter.GetComponent<Image>().sprite = resetCharacter;
+            gameManager.CreatePlayer();
+            gameManager.ReleaseButtonPressed();
+            gameManager.timeMachine.slowTimeDown = false;
+            characterReleased = true;
+        }
+        else
+        {
+            gameManager.DestroyExistingCharacter();
+            characterReleased = false;
+            gameManager.gameInMotion = false;
+            gameManager.blockMovement = false;
+            gameManager.timeMachine.slowTimeDown = false;
+            releaseCharacter.GetComponent<Image>().sprite = playButton;
+        }
     }
 
-    public void ResetCharacter() {
-        gameManager.CreatePlayer();
-    }
-
-    public void ResetLevel() {
+    public void ResetLevel()
+    {
         SceneManager.LoadScene("MainLevel");
     }
 
     public void ShowInfoBoxCantBePlacedHere()
     {
-        alpha = 1.5f;
+        alpha = 1f;
         infoBoxCantPlaceItem.gameObject.SetActive(true);
         fadeItem = true;
-        print("ShowInfoBoxCantBePlacedHere()");
+        infoBoxText.text = "This item can't be placed here";
+    }
+
+    public void ShowInfoBoxPleaseResetTheCharacter()
+    {
+        alpha = 1f;
+        infoBoxCantPlaceItem.gameObject.SetActive(true);
+        fadeItem = true;
+        infoBoxText.text = "You need to reset the character first";
     }
 
     public void FadeObject()
     {
         infoBoxCantPlaceItem.color = new Color(255, 255, 255, alpha);
-        infoBoxCantPlaceItem.gameObject.transform.Find("CantPlace").GetComponent<Text>().color = new Color(0, 0, 0, alpha);
+        infoBoxText.GetComponent<Text>().color = new Color(0, 0, 0, alpha);
         if (alpha < 0)
         {
             infoBoxCantPlaceItem.gameObject.SetActive(false);
@@ -136,5 +149,4 @@ public class UIControl : MonoBehaviour {
         rotateButton.GetComponent<Image>().color = new Color(255, 255, 255, 1f);
         moveButton.GetComponent<Image>().color = new Color(255, 255, 255, 1f);
     }
-
 }

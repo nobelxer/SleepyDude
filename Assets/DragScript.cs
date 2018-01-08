@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DragScript : MonoBehaviour {
+public class DragScript : MonoBehaviour
+{
 
     public GameManager gameManager;
     public float touchSensivity; // slows down rotation
@@ -34,11 +35,11 @@ public class DragScript : MonoBehaviour {
     {
         gameManager = FindObjectOfType<GameManager>();
         imageRenderer = GetComponent<SpriteRenderer>();
-        rigidBody2D = GetComponent<Rigidbody2D>();  
+        rigidBody2D = GetComponent<Rigidbody2D>();
     }
 
     void Update()
-    {    
+    {
 
         playerSize = imageRenderer.bounds.size;
 
@@ -49,7 +50,7 @@ public class DragScript : MonoBehaviour {
 
         var bottomBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, distanceToCamera)).y + (playerSize.y / 2);
         var topBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 1, distanceToCamera)).y - (playerSize.y / 2);
- 
+
         touchSensivity = gameManager.touchSensitivityMultiplier;
 
         // Check with Gm if you are the active object
@@ -58,12 +59,14 @@ public class DragScript : MonoBehaviour {
             rigidBody2D.bodyType = RigidbodyType2D.Dynamic;
             enableRotate = gameManager.activeRotate;
             enableMove = gameManager.activeMove;
-            
-        } else {
-            rigidBody2D.bodyType = RigidbodyType2D.Kinematic; 
+
+        }
+        else
+        {
+            rigidBody2D.bodyType = RigidbodyType2D.Kinematic;
             objectHasBeenPicked = false;
             enableMove = false;
-            enableRotate = false;                   
+            enableRotate = false;
         }
 
         // rotation logic
@@ -91,7 +94,7 @@ public class DragScript : MonoBehaviour {
                 }
             }
         }
-              
+
         // drag logic
         if (enableMove)
         {
@@ -108,11 +111,8 @@ public class DragScript : MonoBehaviour {
                     Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
                     Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + offsetOut;
                     transform.position = (new Vector3(
-    Mathf.Clamp(cursorPosition.x, leftBorder, rightBorder),
-    Mathf.Clamp(cursorPosition.y, bottomBorder, topBorder),
-    cursorPosition.z)
-);
-                   // transform.position = cursorPosition;
+                    Mathf.Clamp(cursorPosition.x, leftBorder, rightBorder),
+                    Mathf.Clamp(cursorPosition.y, bottomBorder, topBorder), 0));
                 }
             }
         }
@@ -121,6 +121,7 @@ public class DragScript : MonoBehaviour {
     void OnMouseDown()
     {
         gameManager.CheckIfActiveItemCanBeChanged();
+        gameManager.CheckIfActiveItemCanBeMoved();
 
         if (gameManager.canChangeItem == true)
         {
@@ -142,10 +143,10 @@ public class DragScript : MonoBehaviour {
     {
         // drag logic
         if (gameManager.blockMovement == false)
-        {            
+        {
             if (enableRotate != true)
             {
-                if(objectHasBeenPicked == true)
+                if (objectHasBeenPicked == true)
                 {
                     Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
                     Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + offset;
