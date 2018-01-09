@@ -14,17 +14,16 @@ public class ButtonControl : MonoBehaviour
     public bool objectSpawned;
     public bool positionChanged;
 
-    public Vector3 mySpawnedPosition;
-
 
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
+
     }
 
     void Update()
     {
-        print(IMoved());
+                
     }
     public void ButtonClicked()
     {
@@ -50,8 +49,7 @@ public class ButtonControl : MonoBehaviour
                     gameManager.SetLastClickedButton(spawnButton);
                     gameManager.SetActiveDrag(mySpawnedPrefab);
                     gameManager.ObjectMoving();
-                    Invoke("SetDistanceToZero", 0.5f);
-                    mySpawnedPosition = mySpawnedPrefab.transform.position;
+                    
                 }
                 else
                 {
@@ -83,19 +81,4 @@ public class ButtonControl : MonoBehaviour
         }
     }
 
-    void SetDistanceToZero()
-    {
-        gameManager.distance = 0;
-    }
-
-    public bool IMoved() {
-
-        if (mySpawnedPosition  == mySpawnedPrefab.transform.position)
-        {
-            return false;
-        }else
-        {
-            return true;
-        }
-        }
 }

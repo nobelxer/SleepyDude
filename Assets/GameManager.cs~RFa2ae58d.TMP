@@ -57,11 +57,8 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-        lbT.text = distance.ToString();
 
-        if (lastSpawnedItem != null) {
-            distance = Vector3.Distance(lastSpawnedItem.transform.position, lastSpawnStartingPosition);
-        }
+        distance = Vector3.Distance(lastSpawnedItem.transform.position, lastSpawnStartingPosition);
 
         if (activeItem != null)
         {
@@ -216,7 +213,7 @@ public class GameManager : MonoBehaviour
 
     public void CheckIfSpawnedShouldBeDestroyed()
     {
-        if (lastClickedButton.GetComponent<ButtonControl>().IMoved() == false) {
+        if (distance == 0) {
             lastClickedButton.GetComponent<ButtonControl>().DestroyMyItem();
         }       
     }
