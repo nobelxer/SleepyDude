@@ -22,6 +22,8 @@ public class UIControl : MonoBehaviour
     public Image infoBoxCantPlaceItem;
     public Text infoBoxText;
 
+    public Image resetCharacterArrow;
+
     private GameManager gameManager;
 
     private bool fadeItem;
@@ -31,6 +33,7 @@ public class UIControl : MonoBehaviour
     {
         gameManager = FindObjectOfType<GameManager>();
         infoBoxCantPlaceItem.gameObject.SetActive(false);
+        resetCharacterArrow.gameObject.SetActive(false);
     }
 
     void Update()
@@ -85,22 +88,28 @@ public class UIControl : MonoBehaviour
 
     public void Release()
     {
-        if (characterReleased == false)
+        if (gameManager.cantPlaceHere == false) {
+            if (characterReleased == false)
+            {
+                releaseCharacter.GetComponent<Image>().sprite = resetCharacter;
+                gameManager.CreatePlayer();
+                gameManager.ReleaseButtonPressed();
+                gameManager.timeMachine.slowTimeDown = false;
+                characterReleased = true;
+            }
+            else
+            {
+                gameManager.DestroyExistingCharacter();
+                characterReleased = false;
+                gameManager.gameInMotion = false;
+                gameManager.blockMovement = false;
+                gameManager.timeMachine.slowTimeDown = false;
+                releaseCharacter.GetComponent<Image>().sprite = playButton;
+            }
+        }else
         {
-            releaseCharacter.GetComponent<Image>().sprite = resetCharacter;
-            gameManager.CreatePlayer();
-            gameManager.ReleaseButtonPressed();
-            gameManager.timeMachine.slowTimeDown = false;
-            characterReleased = true;
-        }
-        else
-        {
-            gameManager.DestroyExistingCharacter();
-            characterReleased = false;
-            gameManager.gameInMotion = false;
-            gameManager.blockMovement = false;
-            gameManager.timeMachine.slowTimeDown = false;
-            releaseCharacter.GetComponent<Image>().sprite = playButton;
+            print("info box gameManager.uiControl.ShowInfoBoxCantBePlacedHere();");
+            gameManager.uiControl.ShowInfoBoxCantBePlacedHere();
         }
     }
 
@@ -121,6 +130,7 @@ public class UIControl : MonoBehaviour
     {
         alpha = 1f;
         infoBoxCantPlaceItem.gameObject.SetActive(true);
+        resetCharacterArrow.gameObject.SetActive(true);
         fadeItem = true;
         infoBoxText.text = "You need to reset the character first";
     }
@@ -128,14 +138,16 @@ public class UIControl : MonoBehaviour
     public void FadeObject()
     {
         infoBoxCantPlaceItem.color = new Color(255, 255, 255, alpha);
-        infoBoxText.GetComponent<Text>().color = new Color(0, 0, 0, alpha);
+        infoBoxText.GetComponent<Text>().color = new Color(0, 0, 0, alpha);        
+        resetCharacterArrow.GetComponent<Image>().color = new Color(255, 255, 255, alpha);
         if (alpha < 0)
         {
+            resetCharacterArrow.gameObject.SetActive(false);
             infoBoxCantPlaceItem.gameObject.SetActive(false);
             fadeItem = false;
         }
     }
-
+  
     void GreyOutButtons()
     {
         confirmButton.GetComponent<Image>().color = new Color(255, 255, 255, 0.2f);

@@ -5,9 +5,6 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public float startingPosition;
-    public float distance;
-
     public GameObject activeItem;
     public GameObject player;
     public GameObject playerSpawn;
@@ -17,16 +14,15 @@ public class GameManager : MonoBehaviour
     public GameObject lastSpawnedItem;
     public Button lastClickedButton;
 
-    public Vector3 lastSpawnStartingPosition;
-
-    public Text plT;
-    public Text lbT;
+    public GameObject spawnDeleteControl;
 
     public bool activeRotate;
     public bool activeMove;
     public bool blockMovement;
+
     public bool stopPlayerMoving = true;
     public bool editMode;
+
     public bool cantPlaceHere;
     public bool canChangeItem = true;
     public bool gameInMotion;
@@ -36,7 +32,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-
         timeMachine = GetComponent<TimeSlowDown>();
         uiControl = GetComponent<UIControl>();
 
@@ -55,14 +50,7 @@ public class GameManager : MonoBehaviour
     }
 
     void Update()
-    {
-
-        lbT.text = distance.ToString();
-
-        if (lastSpawnedItem != null) {
-            distance = Vector3.Distance(lastSpawnedItem.transform.position, lastSpawnStartingPosition);
-        }
-
+    {  
         if (activeItem != null)
         {
             editMode = true;
@@ -102,7 +90,7 @@ public class GameManager : MonoBehaviour
 
     public void DestroyExistingCharacter()
     {
-        Destroy(playerInstance);
+        Destroy(playerInstance); 
     }
 
     public void ObjectRotating()
@@ -189,21 +177,7 @@ public class GameManager : MonoBehaviour
     {
         timeMachine.DoSlowMotion();
     }
-
-
-    public bool CheckIfActiveItemHasBeenMoved()
-    {       
-        if (lastSpawnedItem.transform.position == lastSpawnStartingPosition)
-        {           
-            return true;
-        }
-        else
-        {
-            
-            return false;
-        }
-    }
-
+ 
     public void SetLastSpawnedItem(GameObject item)
     {
         lastSpawnedItem = item;
@@ -214,10 +188,11 @@ public class GameManager : MonoBehaviour
         lastClickedButton = button;
     }
 
-    public void CheckIfSpawnedShouldBeDestroyed()
+    public void CheckIfSpawnedItemShouldBeDeleted()
     {
-        if (lastClickedButton.GetComponent<ButtonControl>().IMoved() == false) {
-            lastClickedButton.GetComponent<ButtonControl>().DestroyMyItem();
-        }       
+        if (lastSpawnedItem.GetComponent<ItemControl>().myParent.GetComponent<ButtonControl>().mySpawnShouldBeDeleted)
+        {
+            lastSpawnedItem.GetComponent<ItemControl>().myParent.GetComponent<ButtonControl>().DestroyMyItem();
+        }      
     }
 }

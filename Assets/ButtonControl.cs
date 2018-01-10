@@ -13,6 +13,9 @@ public class ButtonControl : MonoBehaviour
     public GameManager gameManager;
     public bool objectSpawned;
     public bool positionChanged;
+    public bool mySpawnIsActiveItem;
+
+    public bool mySpawnShouldBeDeleted;
 
     public Vector3 mySpawnedPosition;
 
@@ -24,42 +27,56 @@ public class ButtonControl : MonoBehaviour
 
     void Update()
     {
-        print(IMoved());
+        if (gameManager.lastSpawnedItem != null) {
+            if (gameManager.activeItem == mySpawnedPrefab)
+            {
+                mySpawnIsActiveItem = true;
+            }
+            else
+            {
+                mySpawnIsActiveItem = false;
+            }
+        }
     }
+
     public void ButtonClicked()
     {
-        if (gameManager.lastSpawnedItem != null)
-        {
-            gameManager.CheckIfSpawnedShouldBeDestroyed();
-        }
-
         if (gameManager.CheckIfGameIsInMotion())
         {
-            if (gameManager.CheckIfActiveItemCanBeChanged())
-            {
-                if (objectSpawned == false)
-                {
-                    
-                    objectSpawned = true;
-                    CheckButtonColor();
-                    mySpawnedPrefab = Instantiate(prefabToSpawn, buttonSpawnPosition.transform);
-                    mySpawnedPrefab.transform.position = new Vector3(0,-3f,0);
-                    mySpawnedPrefab.transform.parent = gameObject.transform;
-                    gameManager.lastSpawnStartingPosition = mySpawnedPrefab.transform.position;
-                    gameManager.SetLastSpawnedItem(mySpawnedPrefab);
-                    gameManager.SetLastClickedButton(spawnButton);
-                    gameManager.SetActiveDrag(mySpawnedPrefab);
-                    gameManager.ObjectMoving();
-                    Invoke("SetDistanceToZero", 0.5f);
-                    mySpawnedPosition = mySpawnedPrefab.transform.position;
-                }
-                else
-                {
-                    DestroyMyItem();
 
+            if (objectSpawned == true)
+            {
+                print("Destroyin item");
+                DestroyMyItem();
+                return;
+            }
+
+            if (gameManager.cantPlaceHere == true)
+            {
+                if (mySpawnIsActiveItem == false)
+                {
+                    gameManager.uiControl.ShowInfoBoxCantBePlacedHere();
                 }
             }
-          
+
+            if (gameManager.lastSpawnedItem != null)
+            {
+                gameManager.CheckIfSpawnedItemShouldBeDeleted();
+            }
+
+            if (objectSpawned == false && gameManager.cantPlaceHere == false)
+            {
+                print("Object spawn code");
+                objectSpawned = true;
+                CheckButtonColor();
+                mySpawnedPrefab = Instantiate(prefabToSpawn, buttonSpawnPosition.transform);
+                mySpawnedPrefab.transform.position = new Vector3(0, -3f, 0);
+                mySpawnedPrefab.transform.parent = gameObject.transform;
+                gameManager.SetLastSpawnedItem(mySpawnedPrefab);
+                gameManager.SetLastClickedButton(spawnButton);
+                gameManager.SetActiveDrag(mySpawnedPrefab);
+                gameManager.ObjectMoving();
+            }
         }
     }
 
@@ -67,7 +84,7 @@ public class ButtonControl : MonoBehaviour
     {
         objectSpawned = false;
         CheckButtonColor();
-        Destroy(mySpawnedPrefab);        
+        Destroy(mySpawnedPrefab);
         gameManager.activeItem = null;
     }
 
@@ -83,19 +100,4 @@ public class ButtonControl : MonoBehaviour
         }
     }
 
-    void SetDistanceToZero()
-    {
-        gameManager.distance = 0;
-    }
-
-    public bool IMoved() {
-
-        if (mySpawnedPosition  == mySpawnedPrefab.transform.position)
-        {
-            return false;
-        }else
-        {
-            return true;
-        }
-        }
 }

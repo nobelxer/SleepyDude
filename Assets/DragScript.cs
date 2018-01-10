@@ -111,7 +111,7 @@ public class DragScript : MonoBehaviour
                     Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + offsetOut;
                     transform.position = (new Vector3(
                     Mathf.Clamp(cursorPosition.x, leftBorder, rightBorder),
-                    Mathf.Clamp(cursorPosition.y, bottomBorder+2f, topBorder), 0));
+                    Mathf.Clamp(cursorPosition.y, bottomBorder + 2f, topBorder), 0));
                 }
             }
         }
@@ -119,23 +119,33 @@ public class DragScript : MonoBehaviour
 
     void OnMouseDown()
     {
-        gameManager.CheckIfActiveItemCanBeChanged();
-        gameManager.CheckIfGameIsInMotion();
-
-        if (gameManager.canChangeItem == true)
+        if (objectHasBeenPicked == false)
         {
-            if (objectHasBeenPicked == false)
+            if (gameManager.cantPlaceHere == false)
             {
-                objectHasBeenPicked = true;
-                gameManager.SetActiveDrag(gameObject);
-                gameManager.activeMove = true;
-                enableMove = true;
-            }
-        }
+                gameManager.CheckIfGameIsInMotion();
 
-        // Set starting offSet
-        screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-        offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+                if (gameManager.canChangeItem == true)
+                {
+                    if (objectHasBeenPicked == false)
+                    {
+                        objectHasBeenPicked = true;
+                        gameManager.SetActiveDrag(gameObject);
+                        gameManager.activeMove = true;
+                        enableMove = true;
+                    }
+                }
+            }
+            else
+            {
+                if (gameManager.activeItem != gameObject) {
+                    gameManager.uiControl.ShowInfoBoxCantBePlacedHere();
+                }
+            }
+            // Set starting offSet
+            screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+            offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+        }
     }
 
     void OnMouseDrag()
