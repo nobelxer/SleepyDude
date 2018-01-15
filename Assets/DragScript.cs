@@ -84,12 +84,14 @@ public class DragScript : MonoBehaviour
                 {
                     distance = startingPosition - Input.mousePosition.y;
                     transform.eulerAngles = new Vector3(0, 0, (distance + myRotation) * touchSensivity);
+
                 }
                 // Rotation - rotation alrady made
                 if (Input.GetMouseButtonUp(0))
                 {
                     myRotation = myRotation + distance;
                     distance = 0;
+     
                 }
             }
         }
