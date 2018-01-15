@@ -19,6 +19,7 @@ public class ButtonControl : MonoBehaviour
 
     public Vector3 mySpawnedPosition;
 
+    public Color activeButtonColor;
 
     void Start()
     {
@@ -27,28 +28,41 @@ public class ButtonControl : MonoBehaviour
 
     void Update()
     {
-        if (gameManager.lastSpawnedItem != null) {
-            if (gameManager.activeItem == mySpawnedPrefab)
+      
+        if (gameManager.lastSpawnedItem != null)
+        {
+            if (objectSpawned == true)
             {
-                mySpawnIsActiveItem = true;
-            }
-            else
-            {
-                mySpawnIsActiveItem = false;
+                if (gameManager.activeItem == mySpawnedPrefab)
+                {
+                    mySpawnIsActiveItem = true;
+                }
+                else
+                {
+                    mySpawnIsActiveItem = false;
+                }
             }
         }
+
+        ButtonColorControl();
     }
 
     public void ButtonClicked()
     {
         if (gameManager.CheckIfGameIsInMotion())
         {
-
             if (objectSpawned == true)
             {
-                print("Destroyin item");
-                DestroyMyItem();
-                return;
+                if (mySpawnIsActiveItem == true)
+                {
+                    print("Destroyin item");
+                    DestroyMyItem();
+                    return;
+                }
+                gameManager.SetLastSpawnedItem(mySpawnedPrefab);
+                gameManager.SetLastClickedButton(spawnButton);
+                gameManager.SetActiveDrag(mySpawnedPrefab);
+                gameManager.ObjectMoving();
             }
 
             if (gameManager.cantPlaceHere == true)
@@ -68,9 +82,7 @@ public class ButtonControl : MonoBehaviour
             {
                 print("Object spawn code");
                 objectSpawned = true;
-                CheckButtonColor();
                 mySpawnedPrefab = Instantiate(prefabToSpawn, buttonSpawnPosition.transform);
-                mySpawnedPrefab.transform.position = new Vector3(0, -3f, 0);
                 mySpawnedPrefab.transform.parent = gameObject.transform;
                 gameManager.SetLastSpawnedItem(mySpawnedPrefab);
                 gameManager.SetLastClickedButton(spawnButton);
@@ -82,22 +94,28 @@ public class ButtonControl : MonoBehaviour
 
     public void DestroyMyItem()
     {
+        mySpawnIsActiveItem = false;
         objectSpawned = false;
-        CheckButtonColor();
         Destroy(mySpawnedPrefab);
         gameManager.activeItem = null;
     }
 
-    private void CheckButtonColor()
+    private void ButtonColorControl()
     {
-        if (objectSpawned)
+        if (mySpawnIsActiveItem == true)
         {
-            spawnButton.GetComponent<Image>().color = new Color32(255, 255, 255, 40);
+            spawnButton.GetComponent<Image>().color = activeButtonColor;
         }
         else
         {
-            spawnButton.GetComponent<Image>().color = new Color32(141, 141, 141, 255);
+            if (objectSpawned)
+            {
+                spawnButton.GetComponent<Image>().color = new Color32(255, 255, 255, 40);
+            }
+            else
+            {
+                spawnButton.GetComponent<Image>().color = new Color32(141, 141, 141, 255);
+            }
         }
     }
-
 }

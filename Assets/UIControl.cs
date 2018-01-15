@@ -19,16 +19,19 @@ public class UIControl : MonoBehaviour
     public Sprite resetCharacter;
     private bool characterReleased;
 
+    public bool fadeResetCharacterArrow;
+
     public Image infoBoxCantPlaceItem;
     public Text infoBoxText;
 
     public Image resetCharacterArrow;
+    public float arrowAlpha = 1;
 
     private GameManager gameManager;
 
     private bool fadeItem;
     private float alpha;
-    
+
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
@@ -38,13 +41,33 @@ public class UIControl : MonoBehaviour
 
     void Update()
     {
+        // controls objects alphas
+        // to do limit this or remove from update
         alpha -= Time.deltaTime / 2;
+        arrowAlpha -= Time.deltaTime / 3;
+
+
+        // remove Reset Player info box if Reset button clicked
+        if (gameManager.gameInMotion == false)
+        {
+            if (gameManager.cantPlaceHere == false) {
+                infoBoxCantPlaceItem.gameObject.SetActive(false);
+                resetCharacterArrow.gameObject.SetActive(false);
+            }
+        }
+          
+        // fades UI elements
+        if (fadeResetCharacterArrow)
+        {
+            FadeResetCharacterArrow();
+        }
 
         if (fadeItem)
         {
             FadeObject();
         }
 
+        // confrim button icon control
         if (!gameManager.cantPlaceHere)
         {
             confirmButton.GetComponent<Image>().sprite = confirmButtonGreen;
@@ -54,11 +77,13 @@ public class UIControl : MonoBehaviour
             confirmButton.GetComponent<Image>().sprite = confirmButtonOrange;
         }
 
+        // reset character button control
         if (gameManager.editMode == false)
         {
             confirmButton.GetComponent<Image>().sprite = confirmButtonGreen;
         }
 
+        // grey outs buttons if there is no active item
         if (gameManager.activeItem == null)
         {
             GreyOutButtons();
@@ -69,6 +94,7 @@ public class UIControl : MonoBehaviour
         }
     }
 
+    // buttons logic
     public void Rotate()
     {
         gameManager.ObjectRotating();
@@ -88,11 +114,13 @@ public class UIControl : MonoBehaviour
 
     public void Release()
     {
-        if (gameManager.cantPlaceHere == false) {
+        if (gameManager.cantPlaceHere == false)
+        {
             if (characterReleased == false)
             {
                 releaseCharacter.GetComponent<Image>().sprite = resetCharacter;
-                gameManager.CreatePlayer();
+                gameManager.SpawnPlayer();
+                gameManager.SpawnBed();
                 gameManager.ReleaseButtonPressed();
                 gameManager.timeMachine.slowTimeDown = false;
                 characterReleased = true;
@@ -106,7 +134,8 @@ public class UIControl : MonoBehaviour
                 gameManager.timeMachine.slowTimeDown = false;
                 releaseCharacter.GetComponent<Image>().sprite = playButton;
             }
-        }else
+        }
+        else
         {
             print("info box gameManager.uiControl.ShowInfoBoxCantBePlacedHere();");
             gameManager.uiControl.ShowInfoBoxCantBePlacedHere();
@@ -118,6 +147,7 @@ public class UIControl : MonoBehaviour
         SceneManager.LoadScene("MainLevel");
     }
 
+    // info box control
     public void ShowInfoBoxCantBePlacedHere()
     {
         alpha = 1f;
@@ -130,24 +160,30 @@ public class UIControl : MonoBehaviour
     {
         alpha = 1f;
         infoBoxCantPlaceItem.gameObject.SetActive(true);
-        resetCharacterArrow.gameObject.SetActive(true);
+        ShowResetCharacterArrow();
         fadeItem = true;
         infoBoxText.text = "You need to reset the character first";
+    }
+
+    public void ShowResetCharacterArrow()
+    {
+        arrowAlpha = 1f;
+        fadeResetCharacterArrow = true;
+        resetCharacterArrow.gameObject.SetActive(true);
     }
 
     public void FadeObject()
     {
         infoBoxCantPlaceItem.color = new Color(255, 255, 255, alpha);
-        infoBoxText.GetComponent<Text>().color = new Color(0, 0, 0, alpha);        
-        resetCharacterArrow.GetComponent<Image>().color = new Color(255, 255, 255, alpha);
+        infoBoxText.GetComponent<Text>().color = new Color(0, 0, 0, alpha);
+        fadeResetCharacterArrow = true;
         if (alpha < 0)
         {
-            resetCharacterArrow.gameObject.SetActive(false);
             infoBoxCantPlaceItem.gameObject.SetActive(false);
             fadeItem = false;
         }
     }
-  
+
     void GreyOutButtons()
     {
         confirmButton.GetComponent<Image>().color = new Color(255, 255, 255, 0.2f);
@@ -160,5 +196,16 @@ public class UIControl : MonoBehaviour
         confirmButton.GetComponent<Image>().color = new Color(255, 255, 255, 1f);
         rotateButton.GetComponent<Image>().color = new Color(255, 255, 255, 1f);
         moveButton.GetComponent<Image>().color = new Color(255, 255, 255, 1f);
+    }
+
+    void FadeResetCharacterArrow()
+    {
+        resetCharacterArrow.GetComponent<Image>().color = new Color(255, 255, 255, arrowAlpha);
+
+        if (arrowAlpha < 0)
+        {
+            resetCharacterArrow.gameObject.SetActive(false);
+            fadeResetCharacterArrow = false;
+        }
     }
 }

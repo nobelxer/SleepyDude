@@ -14,6 +14,10 @@ public class GameManager : MonoBehaviour
     public GameObject lastSpawnedItem;
     public Button lastClickedButton;
 
+    public GameObject bedPrefab;
+    public GameObject bedSpawnPoint;
+    public GameObject bedInstance;
+
     public GameObject spawnDeleteControl;
 
     public bool activeRotate;
@@ -46,7 +50,7 @@ public class GameManager : MonoBehaviour
         }
 
         blockMovement = false;
-        CreatePlayer();
+        SpawnBed();
     }
 
     void Update()
@@ -78,7 +82,7 @@ public class GameManager : MonoBehaviour
         activeItem = target;
     }
 
-    public void CreatePlayer()
+    public void SpawnPlayer()
     {
 
         DestroyExistingCharacter();
@@ -86,6 +90,17 @@ public class GameManager : MonoBehaviour
         playerInstance.transform.eulerAngles = new Vector3(0, 0, Random.Range(-47, 154));
         gravityScale = Random.Range(1, 5);
         stopPlayerMoving = true;
+    }
+
+    public void SpawnBed()
+    {
+        DestroyExistingBed();
+        bedInstance = Instantiate(bedPrefab, bedSpawnPoint.transform.position, bedSpawnPoint.transform.rotation);
+    }
+
+    public void DestroyExistingBed()
+    {
+        Destroy(bedInstance);        
     }
 
     public void DestroyExistingCharacter()
